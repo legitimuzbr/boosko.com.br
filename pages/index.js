@@ -1,10 +1,5 @@
 function Home() {
-    return (
-        <div>
-          <h1>Minha Página Inicial</h1>
-          <p>Bem-vindo à minha página inicial Next.js!</p>
-        </div>
-      );
+  return <h1>Em Construção</h1>;
 }
 
 export default Home;
