@@ -6,33 +6,40 @@ class CameraApp extends Component {
     this.state = {
       stream: null,
       facingMode: "user", // Inicialmente, usando a câmera frontal
+      photoBlob: null, // Para armazenar a imagem capturada como um Blob
     };
     this.videoRef = React.createRef();
+    this.imageCapture = null;
   }
 
   componentDidMount() {
     this.initCamera();
   }
 
-  initCamera = () => {
-    // Solicitar permissão para a câmera
-    navigator.mediaDevices
-      .getUserMedia({
+  initCamera = async () => {
+    try {
+      // Solicitar permissão para a câmera
+      const stream = await navigator.mediaDevices.getUserMedia({
         video: {
+          width: { ideal: 1920 },
+          height: { ideal: 1080 },
           facingMode: this.state.facingMode,
-          focusMode: "continuous", // Ativar o foco contínuo
+          frameRate: { ideal: 120 },
+          videoBitsPerSecond: 32000000, // 8 Mbps (ajuste conforme necessário)
         },
-      })
-      .then((stream) => {
-        this.setState({ stream });
-        if (this.videoRef.current) {
-          this.videoRef.current.srcObject = stream;
-          this.videoRef.current.addEventListener("click", this.focusCamera); // Adicionar evento de clique para focar
-        }
-      })
-      .catch((error) => {
-        console.error("Erro ao acessar a câmera: ", error);
       });
+      this.setState({ stream });
+
+      if (this.videoRef.current) {
+        this.videoRef.current.srcObject = stream;
+
+        // Inicializar a API ImageCapture
+        const track = stream.getVideoTracks()[0];
+        this.imageCapture = new ImageCapture(track);
+      }
+    } catch (error) {
+      console.error("Erro ao acessar a câmera: ", error);
+    }
   };
 
   toggleCamera = () => {
@@ -49,10 +56,23 @@ class CameraApp extends Component {
     });
   };
 
-  focusCamera = () => {
-    // Chamar o foco da câmera ao clicar na imagem
-    if (this.videoRef.current) {
-      this.videoRef.current.focus();
+  takePhoto = async () => {
+    if (this.imageCapture) {
+      try {
+        // Capturar a foto com as configurações da câmera
+        const photoBlob = await this.imageCapture.takePhoto();
+        this.setState({ photoBlob });
+
+        // Criar um link temporário para fazer o download da imagem
+        const downloadLink = document.createElement("a");
+        downloadLink.href = URL.createObjectURL(photoBlob);
+        downloadLink.download = "photo.jpg"; // Sempre como JPG para melhor qualidade
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+      } catch (error) {
+        console.error("Erro ao tirar a foto: ", error);
+      }
     }
   };
 
@@ -70,12 +90,12 @@ class CameraApp extends Component {
       <div>
         <h1>Aplicativo da Câmera</h1>
         <button onClick={this.toggleCamera}>Alternar Câmera</button>
+        <button onClick={this.takePhoto}>Tirar Foto</button>
         <video
           ref={this.videoRef}
           autoPlay
           playsInline
-          muted
-          style={{ width: "100%", maxWidth: "400px", cursor: "pointer" }} // Adicionar cursor apontando
+          style={{ width: "100%", maxWidth: "400px", cursor: "pointer" }}
         />
       </div>
     );
