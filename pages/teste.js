@@ -1,6 +1,4 @@
 import React, { Component } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSync } from "@fortawesome/free-solid-svg-icons";
 
 class CameraApp extends Component {
   constructor(props) {
@@ -58,10 +56,7 @@ class CameraApp extends Component {
     return (
       <div>
         <h1>Aplicativo da Câmera</h1>
-        <button onClick={this.toggleCamera}>
-          <FontAwesomeIcon icon={faSync} />
-          Alternar Câmera
-        </button>
+        <button onClick={this.toggleCamera}>Alternar Câmera</button>
         <video
           ref={this.videoRef}
           autoPlay
