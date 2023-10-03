@@ -29,23 +29,24 @@
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
-    <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
-
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
-
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
-
-    <script src="https://legitimuz-cdn.s3.amazonaws.com/js/sdk/legitimuz-sdk.js"></script>
+    <div id="legitimuz-root"></div>
+    <script src="https://cdn.legitimuz.com/js/sdk/legitimuz-sdk.js"></script>
     <script lang="text/javascript">
-        const legitimuz = Legitimuz({
-          host: "https://api.legitimuz.com",
-          token: "9a16d42a-bdfa-4e5d-988d-d4acb42ed795",
-        });
+      const
+       legitimuz
+       =
+       Legitimuz
+      (
+      {
+      host: "https://api.legitimuz.com",
+      token: "d95bddfb-3e48-49f9-80ec-8682dc95f269",
+      onSuccess: (eventName) => {
+      console.log(eventName) // ocr | facematch
+      },
+      onError: (eventName) => {
+      console.log(eventName) // ocr | facematch
+      }
+      });
 
       legitimuz.mount();
     </script>

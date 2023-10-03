@@ -22,7 +22,6 @@ function App() {
           </div>
         </div>
       </div>
-      <div id="legitimuz-root"></div>
     </>
   );
 }
